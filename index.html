@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Status - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 50px;
+            text-align: center;
+            max-width: 600px;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-item-label {
+            text-align: left;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .status-item-value {
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .timestamp {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status-badge">✓ Online</div>
+        
+        <h1>Website is Working!</h1>
+        <p>Welcome to your Terraform-deployed website. This demo page confirms your infrastructure is up and running.</p>
+        
+        <div class="info-box">
+            <h3>System Status</h3>
+            <div class="status-item">
+                <span class="status-item-label">Server Status</span>
+                <span class="status-item-value" id="serverStatus">✓ Running</span>
+            </div>
+            <div class="status-item">
+                <span class="status-item-label">Website</span>
+                <span class="status-item-value" id="websiteStatus">✓ Active</span>
+            </div>
+            <div class="status-item">
+                <span class="status-item-label">Connection</span>
+                <span class="status-item-value" id="connectionStatus">✓ Stable</span>
+            </div>
+            <div class="status-item">
+                <span class="status-item-label">Load Time</span>
+                <span class="status-item-value" id="loadTime">-</span>
+            </div>
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 0.95em;">
+            This page is served from your cloud infrastructure provisioned with Terraform. 
+            You can customize this page by editing the index.html file in your repository.
+        </p>
+        
+        <button onclick="checkStatus()">Check Status</button>
+        
+        <div class="timestamp">
+            Last checked: <span id="lastChecked">Just now</span>
+        </div>
+    </div>
+    
+    <script>
+        // Calculate page load time
+        window.addEventListener('load', function() {
+            const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+            document.getElementById('loadTime').textContent = '✓ ' + loadTime + 'ms';
+        });
+        
+        // Status check function
+        function checkStatus() {
+            const statuses = ['Server Status', 'Website', 'Connection'];
+            statuses.forEach((status, index) => {
+                const elementId = status.replace(/\s+/g, '') + 'Status';
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.animation = 'pulse 0.5s';
+                    setTimeout(() => {
+                        element.style.animation = '';
+                    }, 500);
+                }
+            });
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('lastChecked').textContent = timeString;
+            
+            alert('✓ All systems operational!\n\nServer Status: Running\nWebsite: Active\nConnection: Stable');
+        }
+        
+        // Initial status check
+        window.addEventListener('load', function() {
+            const now = new Date();
+            document.getElementById('lastChecked').textContent = now.toLocaleTimeString();
+        });
+    </script>
+</body>
+</html>
